@@ -138,13 +138,13 @@ IF ( [Total Licences] >= 50, [Food Share %] )
 ```
 Calgary-Business-Licences/
 ├── data/        # Raw and cleaned data files
-├── powerbi/     # .pbix file and PDF export
+├── powerbi/     # .pbix file and DAX measures
 ├── sql/         # SQL scripts (table creation, views, analysis queries)
 ├── images/      # Dashboard screenshots
 └── README.md
 ```
 
-The `powerbi/` folder holds the `.pbix` file, the PDF export and `dax_measures.dax`.
+The `powerbi/` folder holds the `.pbix` file and `dax_measures.dax`.
 
 ---
 
@@ -153,7 +153,7 @@ The `powerbi/` folder holds the `.pbix` file, the PDF export and `dax_measures.d
 1. Download the `.pbix` file from the `powerbi/` folder.
 2. Open it in **Power BI Desktop** (free).
 3. Use the **Community** and **Licence Type** slicers to explore the data.
-4. Or view the PDF export in `powerbi/` without installing anything.
+4. Or view the dashboard screenshots in `images/` without installing anything.
 
 ---
 
