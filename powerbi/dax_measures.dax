@@ -1,0 +1,68 @@
+/* ============================================================
+   Calgary Business Licences – BI Portfolio Project
+   dax_measures.dax
+   All DAX measures used in the Power BI dashboard
+   (stored in the _Measures table).
+   ============================================================ */
+
+-- Basic counts ------------------------------------------------
+
+Total Licences =
+COUNTROWS ( BusinessLicences )
+
+Total Communities =
+DISTINCTCOUNTNOBLANK ( BusinessLicences[COMDISTNM] )
+
+-- Counts each licence type once, using the SQL view
+-- that splits comma-separated licence types into rows
+Total Licence Types =
+DISTINCTCOUNT ( vw_LicenceTypes[LicenceType] )
+
+-- Active licences ---------------------------------------------
+
+-- Active = status is "Licensed" or "Renewal Licensed"
+Active Licences =
+CALCULATE (
+    [Total Licences],
+    BusinessLicences[JOBSTATUSDESC] IN { "Licensed", "Renewal Licensed" }
+)
+
+Active % =
+DIVIDE ( [Active Licences], [Total Licences] )
+
+-- Expiries ----------------------------------------------------
+
+-- Licences expiring between today and 90 days from today
+-- (value changes every day because it uses TODAY())
+Expiring Next 90 Days =
+CALCULATE (
+    [Total Licences],
+    BusinessLicences[EXP_DT] >= TODAY (),
+    BusinessLicences[EXP_DT] <= TODAY () + 90
+)
+
+-- Uses the inactive relationship between EXP_DT and the date table,
+-- so charts by month show expiries instead of issue dates
+Expiries =
+CALCULATE (
+    [Total Licences],
+    USERELATIONSHIP ( BusinessLicences[EXP_DT], datetable[Date] )
+)
+
+-- Food businesses ---------------------------------------------
+
+Food Licences =
+CALCULATE (
+    [Total Licences],
+    CONTAINSSTRING ( BusinessLicences[LICENCETYPES], "FOOD SERVICE" )
+)
+
+Food Share % =
+DIVIDE ( [Food Licences], [Total Licences] )
+
+-- Returns blank for communities with fewer than 50 licences,
+-- so tiny communities (e.g. 1 licence = 100% food) don't
+-- distort the Top 10 ranking. Needed because Power BI applies
+-- the Top N filter before other visual-level filters.
+Food Share % (50+) =
+IF ( [Total Licences] >= 50, [Food Share %] )
